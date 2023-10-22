@@ -9,17 +9,23 @@ def parseText(rawinput):
     newInput = []
 
     for i in range(len(rawinput)):
-        newInput.append(rawinput[i].strip('\n').strip("\""))
+        newInput.append(rawinput[i].strip('\n').strip("\"").split(" | "))
 
-    newInput[:] = [x for x in newInput if x != '']
+    print("NEWINPUT:")
+    print(newInput)
 
-    print("\nSTRIPPING\n")
+    #!newInput[:] = [x for x in newInput if x != '']
+
+    print("\nFormatting numbers...\n")
 
     for i in range(len(newInput)):
-        newInput[i] = re.sub('[^0-9:,]', '', newInput[i])
-        print(newInput[i])
+        print("Test " + str(i) + ":")
+        for j in range(len(newInput[i])):
+            newInput[i][j] = re.sub('[^0-9:,]', '', newInput[i][j])
+            print(newInput[i][j])
+        print()
 
-    print("\nFINAL RESULT\n")
+    print("\nFinal results:\n")
 
     for i in range(len(newInput)):
         print(newInput[i])
