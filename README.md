@@ -1,6 +1,6 @@
 
-- Author: [Sokheng Teang] & 
-- Email: [sokhengteang@csu.fullerton.edu] & 
+- Author: [Sokheng Teang] & [Jacob Armstrong]
+- Email: [sokhengteang@csu.fullerton.edu] & [jarmstrong31@csu.fullerton.edu]
 
 ## Introduction
 
