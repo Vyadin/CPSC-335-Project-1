@@ -42,7 +42,6 @@ def runTestCases():
     rawinput = file.readlines()
     parseFile(rawinput)
 
-
 def runFromInput():
     person1_schedule = input("Enter Person 2's Schedule: ")
     person1_active = input("Enter Person 1's Active Time: ")
