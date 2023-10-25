@@ -1,42 +1,46 @@
+from datetime import datetime, timedelta
 import re
 
-def parseText(rawinput):
+# Global format for input times
+timeFormat = "%H:%M"
 
-    print("Raw input:")
-    print(rawinput)
-    print()
+def parseSchedule(schedule):
+    for i in range(len(schedule)):
+        schedule[i] = re.sub("[^0-9,-:]", "", schedule[i])
+        schedule[i] = schedule[i].strip()
+        schedule[i] = schedule[i].split(",")
 
-    newInput = []
+        if i != 4:
+            for j in range(len(schedule[i])):
+                schedule[i][j] = schedule[i][j].split("-")
+
+        print("Schedules[" + str(i) + "]: " + str(schedule[i]))
+
+def parseFile(rawinput):
+
+    schedule = []
 
     for i in range(len(rawinput)):
-        newInput.append(rawinput[i].strip('\n').strip("\"").split(" | "))
+        schedule.append(rawinput[i])
+        if i%5 == 0 and i != 0:
+            print("5 lines passed")
+            parseSchedule(schedule)
+            schedule = []
 
-    print("NEWINPUT:")
-    print(newInput)
-
-    #!newInput[:] = [x for x in newInput if x != '']
-
-    print("\nFormatting numbers...\n")
-
-    for i in range(len(newInput)):
-        print("Test " + str(i) + ":")
-        for j in range(len(newInput[i])):
-            newInput[i][j] = re.sub('[^0-9:,]', '', newInput[i][j])
-            print(newInput[i][j])
-        print()
-
-    print("\nFinal results:\n")
-
-    for i in range(len(newInput)):
-        print(newInput[i])
-
-#! =========================================
+    #for i in range(len(schedule)-1):
+    #    time1 = datetime.strptime(schedule[i][1], timeFormat)
+    #    print("Time 1: " + str(time1))
+    #    time2 = datetime.strptime(schedule[i+1][0], timeFormat)
+    #    print("Time 2: " + str(time2))
+    #
+    #   timeDelta = time2-time1
+    #    print(timeDelta.seconds/60)
+    #    i += 2
 
 def runTestCases():
     file = open("input.txt", 'r')
     rawinput = file.readlines()
-    parseText(rawinput)
-
+    parseFile(rawinput)
 
 def runFromInput():
     person1_schedule = input("Enter Person 2's Schedule: ")
@@ -52,16 +56,19 @@ def runFromInput():
     meeting_duration = input("Enter meeting duration: ")
 
     rawinput = [person1_schedule, person1_active, person2_schedule, person2_active, meeting_duration]
-    parseText(rawinput)
+    parseFile(rawinput)
 
 def startProgram():
-    runtype = input("Would you like to run the 10 test cases or enter your own input? [Type TEST or ENTER]: ")
-    if runtype != "TEST" and runtype != "ENTER":
-        print("Please enter either TEST or ENTER below.")
-        startProgram()
-    elif runtype == "TEST":
-        runTestCases()
-    elif runtype == "ENTER":
-        runFromInput()
+    runtype = input("Would you like to run the 10 test cases or enter your own input? [Type Test or Enter]: ")
+    runtype = runtype.lower()
+
+    match runtype:
+        case "test":
+            runTestCases()
+        case "enter":
+            runFromInput()
+        case _:
+            print("Please enter either Test or Enter.")
+            startProgram()
 
 startProgram()
