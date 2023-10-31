@@ -5,7 +5,7 @@ import re
 timeFormat = "%H:%M"
 
 # Input and output files
-inputFile = open("input.txt", 'r')
+inputFile = open("Input.txt", 'r')
 rawinput = inputFile.readlines()
 
 outputFile = open("Output.txt", 'w')
