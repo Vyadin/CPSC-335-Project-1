@@ -20,3 +20,6 @@ This project provides an algorithm to find common available time slots for two i
 ```bash
 python Project1_starter.py
 ```
+ <br/>
+ 
+> Output.txt has been left blank in this repository so you can see it run.
