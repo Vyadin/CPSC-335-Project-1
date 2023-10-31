@@ -1,10 +1,9 @@
-
 - Author: [Sokheng Teang] & [Jacob Armstrong]
 - Email: [sokhengteang@csu.fullerton.edu] & [jarmstrong31@csu.fullerton.edu]
 
 ## Introduction
 
-This project provides an algorithm to find common available time slots for two individuals based on their schedules and the duration required for a meeting.
+This project provides an algorithm to find common available time slots for two individuals based on their schedules and the duration required for a meeting. This includes 2 edge cases (examples 3 and 7).
 
 ## Setup and Running
 
@@ -20,3 +19,4 @@ This project provides an algorithm to find common available time slots for two i
 4. Run the Python script using the command:
 ```bash
 python Project1_starter.py
+```
