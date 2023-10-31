@@ -4,14 +4,78 @@ import re
 # Global format for input times
 timeFormat = "%H:%M"
 
-# Here is how I have it formatted so far:
-# start and end times are split into separate indices (Schedules[i][0] is 7:00, Schedules[i][1] is 8:30, etc)
-# Schedules[0] is a list of the times the first person is busy (e.g. 7:00-8:30)
-# Schedules[1] is the time they're logged in all day (e.g. their work day, we can't go past these values)
-# Schedules[2] is a list of times the second person is busy
-# Schedules[3] is the second person's login time
-# Schedules[4] is the minimum time we need to find a meeting for
-# Schedules[5] is just the newline separating the inputs in input.txt for readability
+# Input and output files
+inputFile = open("input.txt", 'r')
+rawinput = inputFile.readlines()
+
+outputFile = open("Output.txt", 'w')
+outputFile.flush()
+
+def findSchedule(schedule1, login1, schedule2, login2, minTime):
+    # Convert meeting time to TimeDelta
+    minTime = timedelta(minutes=(int(float(minTime[0]))))
+
+    outputFile.write("Person 1's schedule: " + str(schedule1).replace('\', \'', '-') + "\n")
+    outputFile.write("Person 1's login time: " + str(login1).replace('\', \'', '-') + "\n")
+    outputFile.write("Person 2's schedule: " + str(schedule2).replace('\', \'', '-') + "\n")
+    outputFile.write("Person 2's login time: " + str(login2).replace('\', \'', '-') + "\n")
+    outputFile.write("Minimum meeting length: " + str(int(minTime.seconds/60)) + " minutes."  + "\n\n")
+
+    # Append login times to schedules
+    schedule1.insert(0, [login1[0][0], login1[0][0]])
+    schedule1.append([login1[0][1], login1[0][1]])
+
+    schedule2.insert(0, [login2[0][0], login2[0][0]])
+    schedule2.append([login2[0][1], login2[0][1]])
+
+    compatibleTimes = []
+
+    timeFound = False
+
+    # Algorithm begins here
+    for i in range((len(schedule1)-1)):
+        time1Start = datetime.strptime(schedule1[i][1], timeFormat)
+        time1End = datetime.strptime(schedule1[i+1][0], timeFormat)
+        time1span = time1End - time1Start
+        for j in range(len(schedule2)-1):
+            time2Start = datetime.strptime(schedule2[j][1], timeFormat)
+            time2End = datetime.strptime(schedule2[j+1][0], timeFormat)
+            time2span = time2End - time2Start
+            
+            if time1Start < time2End and time1End >= time2Start and time1span >= minTime and time2span >= minTime:
+
+                startTime = max(time1Start, time2Start)
+                endTime = min(time1End, time2End)
+
+                if endTime - startTime < minTime:
+                    continue
+
+                meetingTime = startTime.strftime("%H:%M") + "-" + endTime.strftime("%H:%M")
+                compatibleTimes.append(meetingTime)
+
+                timeFound = True
+
+    if not timeFound:
+        outputFile.write("[Notice] No compatible times found.\n")
+    else:
+        outputFile.write("+------------------+\n")
+        outputFile.write("| Compatible Times | ")
+        for i in range(len(compatibleTimes)):
+            outputFile.write(compatibleTimes[i])
+            if i != len(compatibleTimes)-1:
+                outputFile.write(", ")
+        outputFile.write("\n+------------------+\n")
+
+    outputFile.write("\n")
+
+# I kinda dug myself into a hole while parsing the files so here's how it's formatted
+# start and end times are split into separate indices (Schedule[i][0] is 7:00, Schedules[i][1] is 8:30, etc)
+# Schedule[0] is a list of the times the first person is busy (e.g. 7:00-8:30)
+# Schedule[1] is the time they're logged in all day (e.g. their work day, we can't go past these values)
+# Schedule[2] is a list of times the second person is busy
+# Schedule[3] is the second person's login time
+# Schedule[4] is the minimum time we need to find a meeting for
+# Schedule[5] is just the newline separating the inputs in input.txt for readability
 
 def parseSchedule(schedule):
     for i in range(len(schedule)):
@@ -22,65 +86,27 @@ def parseSchedule(schedule):
         if i != 4:
             for j in range(len(schedule[i])):
                 schedule[i][j] = schedule[i][j].split("-") # Separate busy start time and busy end time
+    findSchedule(schedule[0], schedule[1], schedule[2], schedule[3], schedule[4])
 
-        print("Schedules[" + str(i) + "]: " + str(schedule[i]))
-
-# Run the program once for each section of input (5 lines per input in input.txt)
+# Run the program once for each section of input (Separated by newline)
 def parseFile(rawinput):
 
     schedule = []
 
+    runNumber = 1
+
     for i in range(len(rawinput)):
+
         schedule.append(rawinput[i])
-        if i%5 == 0 and i != 0:
+
+        if (rawinput[i] == '\n' or rawinput[i] == ''):
+            outputFile.write("=================================\n")
+            outputFile.write("           Example " + str(runNumber) + "\n")
+            outputFile.write("=================================\n\n")
             parseSchedule(schedule)
-            schedule = []
+            schedule.clear()
+            runNumber += 1
 
-    # Old code showing an example of how to find the timespans
-    #for i in range(len(schedule)-1):
-    #    time1 = datetime.strptime(schedule[i][1], timeFormat)
-    #    print("Time 1: " + str(time1))
-    #    time2 = datetime.strptime(schedule[i+1][0], timeFormat)
-    #    print("Time 2: " + str(time2))
-    #
-    #   timeDelta = time2-time1
-    #    print(timeDelta.seconds/60)
-    #    i += 2
-
-# Take input from file
-def runTestCases():
-    file = open("input.txt", 'r')
-    rawinput = file.readlines()
-    parseFile(rawinput)
-
-# Take input from user
-def runFromInput():
-    person1_schedule = input("Enter Person 2's Schedule: ")
-    person1_active = input("Enter Person 1's Active Time: ")
-
-    print()
-
-    person2_schedule = input("Enter Person 2's Schedule: ")
-    person2_active = input("Enter Person 2's Active Time: ")
-
-    print()
-
-    meeting_duration = input("Enter meeting duration: ")
-
-    rawinput = [person1_schedule, person1_active, person2_schedule, person2_active, meeting_duration]
-    parseFile(rawinput)
-
-def startProgram():
-    runtype = input("Would you like to run the 10 test cases or enter your own input? [Type Test or Enter]: ")
-    runtype = runtype.lower()
-
-    match runtype:
-        case "test":
-            runTestCases()
-        case "enter":
-            runFromInput()
-        case _:
-            print("Please enter either Test or Enter.")
-            startProgram()
-
-startProgram()
+# Run program
+parseFile(rawinput)
+print("[Notice] Program completed.")
