@@ -1,5 +1,10 @@
+## Team members
 - Author: [Sokheng Teang] & [Jacob Armstrong]
 - Email: [sokhengteang@csu.fullerton.edu] & [jarmstrong31@csu.fullerton.edu]
+
+
+## Problem Statement
+![problem statement](formula.png)
 
 ## Introduction
 
